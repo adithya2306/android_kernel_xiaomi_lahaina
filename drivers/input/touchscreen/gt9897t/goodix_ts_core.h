@@ -14,6 +14,7 @@
 #include <linux/input.h>
 #include <linux/interrupt.h>
 #include <linux/completion.h>
+#include <linux/pm_qos.h>
 
 #include <linux/of_irq.h>
 #include <linux/proc_fs.h>
@@ -519,6 +520,7 @@ struct goodix_ts_core {
 	bool tp_pm_suspend;
 	struct completion pm_resume_completion;
 	struct notifier_block notifier;
+	struct pm_qos_request pm_qos_req;
 };
 
 /* external module structures */

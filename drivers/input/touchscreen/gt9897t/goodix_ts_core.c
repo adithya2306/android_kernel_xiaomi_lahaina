@@ -1390,6 +1390,9 @@ static irqreturn_t goodix_ts_threadirq_func(int irq, void *data)
 	}
 	mutex_unlock(&goodix_modules.mutex);
 
+	/* prevent CPU from entering deep sleep */
+	pm_qos_update_request(&core_data->pm_qos_req, 100);
+
 	/* read touch data from touch device */
 	ret = hw_ops->event_handler(core_data, ts_event);
 	if (!core_data->tools_ctrl_sync)
@@ -1409,6 +1412,8 @@ static irqreturn_t goodix_ts_threadirq_func(int irq, void *data)
 			goodix_ts_request_handle(core_data, ts_event);
 		}
 	}
+
+	pm_qos_update_request(&core_data->pm_qos_req, PM_QOS_DEFAULT_VALUE);
 
 	return IRQ_HANDLED;
 }
@@ -2994,6 +2999,9 @@ static int goodix_ts_probe(struct platform_device *pdev)
 	}
 	goodix_core_data = core_data;
 
+	pm_qos_add_request(&core_data->pm_qos_req, PM_QOS_CPU_DMA_LATENCY,
+		PM_QOS_DEFAULT_VALUE);
+
 	if (IS_ENABLED(CONFIG_OF) && bus_interface->dev->of_node) {
 		/* parse devicetree property */
 		ret = goodix_parse_dt(bus_interface->dev,
@@ -3142,6 +3150,8 @@ static int goodix_ts_remove(struct platform_device *pdev)
 		goodix_ts_debugfs_exit(core_data);
 #endif
 	}
+
+	pm_qos_remove_request(&core_data->pm_qos_req);
 
 	return 0;
 }
