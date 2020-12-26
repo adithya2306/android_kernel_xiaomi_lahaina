@@ -1417,6 +1417,7 @@ void irq_set_perf_affinity(unsigned int irq, unsigned int perf_flag)
 	}
 	raw_spin_unlock_irqrestore(&desc->lock, flags);
 }
+EXPORT_SYMBOL(irq_set_perf_affinity);
 
 void unaffine_perf_irqs(void)
 {

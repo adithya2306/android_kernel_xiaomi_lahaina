@@ -396,6 +396,7 @@ struct goodix_bus_interface {
 			unsigned char *data, unsigned int len);
 	int (*write)(struct device *dev, unsigned int addr,
 			unsigned char *data, unsigned int len);
+	int irq;
 };
 
 struct goodix_ts_hw_ops {
@@ -520,7 +521,8 @@ struct goodix_ts_core {
 	bool tp_pm_suspend;
 	struct completion pm_resume_completion;
 	struct notifier_block notifier;
-	struct pm_qos_request pm_qos_req;
+	struct pm_qos_request pm_qos_touch_req;
+	struct pm_qos_request pm_qos_spi_req;
 };
 
 /* external module structures */

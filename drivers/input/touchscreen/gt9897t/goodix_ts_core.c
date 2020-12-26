@@ -1391,7 +1391,8 @@ static irqreturn_t goodix_ts_threadirq_func(int irq, void *data)
 	mutex_unlock(&goodix_modules.mutex);
 
 	/* prevent CPU from entering deep sleep */
-	pm_qos_update_request(&core_data->pm_qos_req, 100);
+	pm_qos_update_request(&core_data->pm_qos_touch_req, 100);
+	pm_qos_update_request(&core_data->pm_qos_spi_req, 100);
 
 	/* read touch data from touch device */
 	ret = hw_ops->event_handler(core_data, ts_event);
@@ -1413,7 +1414,8 @@ static irqreturn_t goodix_ts_threadirq_func(int irq, void *data)
 		}
 	}
 
-	pm_qos_update_request(&core_data->pm_qos_req, PM_QOS_DEFAULT_VALUE);
+	pm_qos_update_request(&core_data->pm_qos_spi_req, PM_QOS_DEFAULT_VALUE);
+	pm_qos_update_request(&core_data->pm_qos_touch_req, PM_QOS_DEFAULT_VALUE);
 
 	return IRQ_HANDLED;
 }
@@ -1434,6 +1436,17 @@ static int goodix_ts_irq_setup(struct goodix_ts_core *core_data)
 		ts_err("failed get irq num %d", core_data->irq);
 		return -EINVAL;
 	}
+
+	core_data->pm_qos_spi_req.type = PM_QOS_REQ_AFFINE_IRQ;
+	core_data->pm_qos_spi_req.irq = core_data->bus->irq;
+	irq_set_perf_affinity(core_data->pm_qos_spi_req.irq, IRQF_PERF_AFFINE);
+	pm_qos_add_request(&core_data->pm_qos_spi_req, PM_QOS_CPU_DMA_LATENCY,
+			PM_QOS_DEFAULT_VALUE);
+
+	core_data->pm_qos_touch_req.type = PM_QOS_REQ_AFFINE_IRQ;
+	core_data->pm_qos_touch_req.irq = core_data->irq;
+	pm_qos_add_request(&core_data->pm_qos_touch_req, PM_QOS_CPU_DMA_LATENCY,
+			PM_QOS_DEFAULT_VALUE);
 
 	ts_info("IRQ:%u,flags:%d", core_data->irq, (int)ts_bdata->irq_flags);
 	ret = devm_request_threaded_irq(&core_data->pdev->dev,
@@ -2999,9 +3012,6 @@ static int goodix_ts_probe(struct platform_device *pdev)
 	}
 	goodix_core_data = core_data;
 
-	pm_qos_add_request(&core_data->pm_qos_req, PM_QOS_CPU_DMA_LATENCY,
-		PM_QOS_DEFAULT_VALUE);
-
 	if (IS_ENABLED(CONFIG_OF) && bus_interface->dev->of_node) {
 		/* parse devicetree property */
 		ret = goodix_parse_dt(bus_interface->dev,
@@ -3151,7 +3161,8 @@ static int goodix_ts_remove(struct platform_device *pdev)
 #endif
 	}
 
-	pm_qos_remove_request(&core_data->pm_qos_req);
+	pm_qos_remove_request(&core_data->pm_qos_touch_req);
+	pm_qos_remove_request(&core_data->pm_qos_spi_req);
 
 	return 0;
 }
