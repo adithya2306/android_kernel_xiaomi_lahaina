@@ -825,4 +825,7 @@ int dsi_display_unset_clk_src(struct dsi_display *display);
  * Return: Zero on Success
  */
 int dsi_display_set_clk_src(struct dsi_display *display);
+
+struct dsi_display *get_main_display(void);
+
 #endif /* _DSI_DISPLAY_H_ */
