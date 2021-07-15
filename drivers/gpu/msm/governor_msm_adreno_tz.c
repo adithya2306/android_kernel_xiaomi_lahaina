@@ -15,6 +15,9 @@
 #include <linux/mm.h>
 #include <linux/qcom_scm.h>
 #include <asm/cacheflush.h>
+#ifdef CONFIG_QGKI
+#include <drm/drm_refresh_rate.h>
+#endif
 #include <linux/qtee_shmbridge.h>
 
 #include "../../devfreq/governor.h"
@@ -408,6 +411,13 @@ static int tz_get_target_freq(struct devfreq *devfreq, unsigned long *freq)
 			priv->bin.busy_time > CEILING) {
 		val = -1 * level;
 	} else {
+#ifdef CONFIG_QGKI
+		unsigned int refresh_rate = dsi_panel_get_refresh_rate();
+
+		if (refresh_rate > 60)
+			priv->bin.busy_time = priv->bin.busy_time * refresh_rate / 60;
+#endif
+
 		val = __secure_tz_update_entry3(level, priv->bin.total_time,
 			priv->bin.busy_time, context_count, priv);
 	}
