@@ -384,7 +384,7 @@ static struct notifier_block mi_disp_notif = {
 	.priority = INT_MAX,
 };
 
-struct kobject *cpu_boost_kobj;
+static struct kobject *cpu_boost_kobj;
 int cpu_boost_init(void)
 {
 	int cpu, ret;
