@@ -10,6 +10,8 @@
 #include "dsi-panel-r66451-dsc-fhd-plus-144hz-cmd-cphy.dtsi"
 #include "dsi-panel-r66451-dsc-fhd-plus-144hz-video-cphy.dtsi"
 #include "dsi-panel-sim-video.dtsi"
+#include "dsi-panel-k9d-36-02-0a-dsc-cmd.dtsi"
+#include "dsi-panel-k9d-42-0d-0b-dsc-cmd.dtsi"
 #include <dt-bindings/clock/mdss-5nm-pll-clk.h>
 
 &soc {
