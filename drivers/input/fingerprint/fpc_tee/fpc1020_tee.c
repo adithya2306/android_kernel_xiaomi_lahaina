@@ -618,7 +618,13 @@ static int device_prepare(struct fpc1020_data *fpc1020, bool enable)
 
 		usleep_range(PWR_ON_SLEEP_MIN_US, PWR_ON_SLEEP_MAX_US);
 
-		if (power_cfg == 0) {
+		if (power_cfg == 1) {
+			rc = regulator_disable(vreg);
+			if (rc) {
+				dev_dbg(dev, "error disabling fp_vdd_vreg!\n");
+				goto exit;
+			}
+		} else {
 			rc = vreg_setup(fpc1020, "vdd_ana", false);
 			if (rc) {
 				dev_dbg(dev, "fpc vreg power off failed. \n");
@@ -1054,11 +1060,13 @@ static int fpc1020_probe(struct platform_device *pdev)
 
 	//rc = hw_reset(fpc1020);
 
+#ifdef FPC_DRM_INTERFACE_WA
 	if (msm_gpio_mpm_wake_set(121, true)) {
 		dev_info(dev, "%s: GPIO 121 wake set failed!\n", __func__);
 	} else {
 		dev_info(dev, "%s: GPIO 121 wake set success!\n", __func__);
 	}
+#endif
 
 	dev_info(dev, "%s: ok\n", __func__);
 
