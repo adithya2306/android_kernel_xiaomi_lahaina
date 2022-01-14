@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-only
 /*
  * Copyright (c) 2017-2021, The Linux Foundation. All rights reserved.
+ * Copyright (C) 2021 XiaoMi, Inc.
  */
 
 #include <linux/module.h>
@@ -1324,15 +1325,24 @@ int cam_sensor_apply_settings(struct cam_sensor_ctrl_t *s_ctrl,
 			i2c_set[offset].request_id == req_id) {
 			list_for_each_entry(i2c_list,
 				&(i2c_set[offset].list_head), list) {
-				rc = cam_sensor_i2c_modes_util(
-					&(s_ctrl->io_master_info),
-					i2c_list);
-				if (rc < 0) {
-					CAM_ERR(CAM_SENSOR,
-						"Failed to apply settings: %d",
-						rc);
-					return rc;
-				}
+                    rc = cam_sensor_i2c_modes_util(
+                        &(s_ctrl->io_master_info),
+                        i2c_list);
+                    if (rc < 0) {
+                        CAM_ERR(CAM_SENSOR,
+                                "Failed to apply settings: %d",
+                                rc);
+                        msleep(20);
+                        rc = cam_sensor_i2c_modes_util(
+                            &(s_ctrl->io_master_info),
+                            i2c_list);
+                        if(rc < 0 ) {
+                            CAM_ERR(CAM_SENSOR,
+                                    "retry Failed to apply settings: %d",
+                                    rc);
+                            return rc;
+                        }
+                    }
 			}
 			CAM_DBG(CAM_SENSOR, "applied req_id: %llu", req_id);
 		} else {

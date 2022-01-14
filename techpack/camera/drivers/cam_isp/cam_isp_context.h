@@ -1,6 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-only */
 /*
  * Copyright (c) 2017-2021, The Linux Foundation. All rights reserved.
+ * Copyright (C) 2021 XiaoMi, Inc.
  */
 
 #ifndef _CAM_ISP_CONTEXT_H_
@@ -273,6 +274,7 @@ struct cam_isp_context_event_record {
  * @workq:                     Worker thread for offline ife
  * @trigger_id:                ID provided by CRM for each ctx on the link
  * @last_bufdone_err_apply_req_id:  last bufdone error apply request id
+ * @deferred_reg_upd: Indicate whether HW has a deferred reg upd
  *
  */
 struct cam_isp_context {
@@ -320,6 +322,7 @@ struct cam_isp_context {
 	struct cam_req_mgr_core_workq        *workq;
 	int32_t                               trigger_id;
 	int64_t                               last_bufdone_err_apply_req_id;
+	atomic_t                              deferred_reg_upd;
 };
 
 /**
