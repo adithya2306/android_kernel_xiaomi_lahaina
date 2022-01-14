@@ -45,6 +45,7 @@
 		bcl_soc:bcl-soc {
 			compatible = "qcom,msm-bcl-soc";
 			#thermal-sensor-cells = <0>;
+			status = "disabled";
 		};
 
 		pm7250b_vib: qcom,vibrator@df00 {
