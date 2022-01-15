@@ -59,7 +59,7 @@ void mi_disp_dbg_utc(const char *format, ...);
 #define DISP_WARN(fmt, ...)     \
 			printk(KERN_WARNING, fmt, ##__VA_ARGS__)
 #define DISP_INFO(fmt, ...)     \
-			printk(KERN_INFO, fmt, ##__VA_ARGS__)
+			pr_debug(fmt, ##__VA_ARGS__)
 #define DISP_ERROR(fmt, ...)    \
 			printk(KERN_ERR, fmt, ##__VA_ARGS__)
 #define DISP_DEBUG(fmt, ...)    \
@@ -68,7 +68,7 @@ void mi_disp_dbg_utc(const char *format, ...);
 #define DISP_UTC_WARN(fmt, ...)   \
 			printk(KERN_WARNING, fmt, ##__VA_ARGS__)
 #define DISP_UTC_INFO(fmt, ...)   \
-			printk(KERN_INFO, fmt, ##__VA_ARGS__)
+			pr_debug(fmt, ##__VA_ARGS__)
 #define DISP_UTC_ERROR(fmt, ...)  \
 			printk(KERN_ERR, fmt, ##__VA_ARGS__)
 #define DISP_UTC_DEBUG(fmt, ...)  \
