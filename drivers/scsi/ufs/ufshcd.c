@@ -3233,8 +3233,8 @@ static inline void ufshcd_init_query(struct ufs_hba *hba,
 	(*request)->upiu_req.selector = selector;
 }
 
-#if defined(CONFIG_UFSHPB)
- int ufshcd_query_flag_retry(struct ufs_hba *hba,
+#if defined(CONFIG_UFSHPB) || defined(CONFIG_SCSI_SKHPB)
+int ufshcd_query_flag_retry(struct ufs_hba *hba,
 	enum query_opcode opcode, enum flag_idn idn, u8 index, bool *flag_res)
 #else
 static int ufshcd_query_flag_retry(struct ufs_hba *hba,
@@ -9920,7 +9920,7 @@ EXPORT_SYMBOL_GPL(ufshcd_dealloc_host);
 static int ufshcd_set_dma_mask(struct ufs_hba *hba)
 {
 	if (hba->capabilities & MASK_64_ADDRESSING_SUPPORT) {
-		if (!dma_set_mask_and_coherent(hba->dev, DMA_BIT_MASK(64)))
+		if (!dma_set_mask_and_coherent(hba->dev, DMA_BIT_MASK(32)))
 			return 0;
 	}
 	return dma_set_mask_and_coherent(hba->dev, DMA_BIT_MASK(32));
