@@ -1042,7 +1042,7 @@ static int goodix_get_panel_type(struct goodix_ts_core *ts_data)
 {
 	int i = 0, j;
 	u8 *lockdown = ts_data->lockdown_info;
-	struct goodix_config_info *panel_list = ts_data->board_data.config_array;
+	__maybe_unused struct goodix_config_info *panel_list = ts_data->board_data.config_array;
 
 	for (j = 0; j < 60; j++) {
 		if (lockdown[1] == 0x42) {
@@ -1274,7 +1274,7 @@ static void goodix_ts_report_pen(struct input_dev *dev,
 static void goodix_ts_report_finger(struct input_dev *dev,
 		struct goodix_touch_data *touch_data)
 {
-	struct goodix_ts_core *core_data = input_get_drvdata(dev);
+	//struct goodix_ts_core *core_data = input_get_drvdata(dev);
 	unsigned int touch_num = touch_data->touch_num;
 	static u32 pre_fin;
 	int i;
@@ -2756,7 +2756,7 @@ static ssize_t goodix_fw_version_info_read(struct file *file, char __user *buf,
 	if (hw_ops->read_version) {
 		ret = hw_ops->read_version(goodix_core_data, &chip_ver);
 		if (!ret) {
-			cnt = snprintf(&k_buf[0], PAGE_SIZE,
+			cnt = snprintf(&k_buf[0], sizeof(&k_buf[0]),
 				"patch_pid:%s\n",
 				chip_ver.patch_pid);
 			cnt += snprintf(&k_buf[cnt], PAGE_SIZE,

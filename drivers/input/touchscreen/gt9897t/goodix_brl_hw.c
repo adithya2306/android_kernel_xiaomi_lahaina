@@ -786,10 +786,10 @@ static int convert_ic_info(struct goodix_ic_info *info, const u8 *data)
 
 static void print_ic_info(struct goodix_ic_info *ic_info)
 {
-	struct goodix_ic_info_version *version = &ic_info->version;
-	struct goodix_ic_info_feature *feature = &ic_info->feature;
-	struct goodix_ic_info_param *parm = &ic_info->parm;
-	struct goodix_ic_info_misc *misc = &ic_info->misc;
+	__maybe_unused struct goodix_ic_info_version *version = &ic_info->version;
+	__maybe_unused struct goodix_ic_info_feature *feature = &ic_info->feature;
+	__maybe_unused struct goodix_ic_info_param *parm = &ic_info->parm;
+	__maybe_unused struct goodix_ic_info_misc *misc = &ic_info->misc;
 
 	ts_info("ic_info_length:                %d",
 		ic_info->length);
