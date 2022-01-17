@@ -67,6 +67,9 @@ scm_version()
 	if test -z "$(git rev-parse --show-cdup 2>/dev/null)" &&
 	   head=$(git rev-parse --verify HEAD 2>/dev/null); then
 
+		printf '%s' "-$(echo $head | cut -c1-8)"
+		return
+
 		if [ -n "$android_release" ] && [ -n "$kmi_generation" ]; then
 			printf '%s' "-$android_release-$kmi_generation"
 		fi
