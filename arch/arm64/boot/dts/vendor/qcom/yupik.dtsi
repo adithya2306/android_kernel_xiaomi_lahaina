@@ -3011,16 +3011,6 @@
 		spm-level = <3>;
 
 		status = "disabled";
-
-		qos0 {
-			mask = <0xf0>;
-			vote = <65>;
-		};
-
-		qos1 {
-			mask = <0x0f>;
-			vote = <59>;
-		};
 	};
 
 	cpu_pmu: cpu-pmu {
