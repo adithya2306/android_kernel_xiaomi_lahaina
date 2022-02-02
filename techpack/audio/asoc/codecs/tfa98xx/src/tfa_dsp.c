@@ -2901,7 +2901,7 @@ enum Tfa98xx_Error tfaRunSpeakerStartup(struct tfa_device *tfa, int force, int p
 		}
 		/* Startup with CF in bypass then return here */
 		if (tfa_cf_enabled(tfa) == 0) {
-			pr_err("tfa_cf_enabled==0\n");
+			pr_debug("tfa_cf_enabled==0\n");
 			return err;
 		}
 
@@ -3302,7 +3302,7 @@ enum tfa_error tfa_dev_start(struct tfa_device *tfa, int next_profile, int vstep
 		active_profile = -1;
 
 	/* TfaRun_SpeakerBoost implies un-mute */
-	pr_info("Active_profile:%s, next_profile:%s\n",
+	pr_debug("Active_profile:%s, next_profile:%s\n",
 		tfaContProfileName(tfa->cnt, tfa->dev_idx, active_profile),
 		tfaContProfileName(tfa->cnt, tfa->dev_idx, next_profile));
 
