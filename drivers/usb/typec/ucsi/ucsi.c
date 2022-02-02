@@ -18,11 +18,6 @@
 #include "ucsi.h"
 #include "trace.h"
 
-#undef dev_dbg
-#undef pr_debug
-#define pr_debug pr_err
-#define dev_dbg dev_err
-
 /*
  * UCSI_TIMEOUT_MS - PPM communication timeout
  *

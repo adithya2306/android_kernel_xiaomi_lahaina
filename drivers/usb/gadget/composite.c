@@ -24,11 +24,6 @@
 
 #include "u_os_desc.h"
 
-#undef dev_dbg
-#undef pr_debug
-#define pr_debug pr_err
-#define dev_dbg dev_err
-
 /**
  * struct usb_os_string - represents OS String to be reported by a gadget
  * @bLength: total length of the entire descritor, always 0x12

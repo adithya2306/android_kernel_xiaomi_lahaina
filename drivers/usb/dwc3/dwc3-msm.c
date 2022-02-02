@@ -172,11 +172,6 @@
 /* BAM pipe mask */
 #define MSM_PIPE_ID_MASK	(0x1F)
 
-#undef dev_dbg
-#undef pr_debug
-#define pr_debug pr_err
-#define dev_dbg dev_err
-
 enum dbm_reg {
 	DBM_EP_CFG,
 	DBM_DATA_FIFO,

@@ -90,11 +90,6 @@
 
 #define USB_HSPHY_VDD_HPM_LOAD 30000 /* uA */
 
-#undef dev_dbg
-#undef pr_debug
-#define pr_debug pr_err
-#define dev_dbg dev_err
-
 struct msm_hsphy {
 	struct usb_phy		phy;
 	void __iomem		*base;
