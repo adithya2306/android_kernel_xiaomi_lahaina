@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2018-2020 The Linux Foundation. All rights reserved.
+ * Copyright (C) 2021 XiaoMi, Inc.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -266,6 +267,9 @@ static void
 hdd_handle_nud_fail_non_sta(struct hdd_adapter *adapter)
 {
 	int status;
+
+	hdd_debug("Do not disconnect after NUD Failure.");
+	return;
 
 	qdf_mutex_acquire(&adapter->disconnection_status_lock);
 	if (adapter->disconnection_in_progress) {
