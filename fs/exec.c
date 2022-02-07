@@ -78,6 +78,10 @@ int suid_dumpable = 0;
 static LIST_HEAD(formats);
 static DEFINE_RWLOCK(binfmt_lock);
 
+static struct task_struct *fp_daemon;
+#define FP_DAEMON_PREFIX "/vendor/bin/hw/android.hardware.biometrics.fingerprint"
+#define MI_FP_DAEMON_PREFIX "/vendor/bin/hw/mfp-daemon"
+
 #define ZYGOTE32_BIN "/system/bin/app_process32"
 #define ZYGOTE64_BIN "/system/bin/app_process64"
 static struct signal_struct *zygote32_sig;
@@ -1847,6 +1851,11 @@ static int __do_execve_file(int fd, struct filename *filename,
 			zygote32_sig = current->signal;
 		} else if (unlikely(!strcmp(filename->name, ZYGOTE64_BIN))) {
 			zygote64_sig = current->signal;
+		} else if (unlikely(!strncmp(filename->name,
+				FP_DAEMON_PREFIX, strlen(FP_DAEMON_PREFIX))) ||
+				unlikely(!strncmp(filename->name,
+				MI_FP_DAEMON_PREFIX, strlen(MI_FP_DAEMON_PREFIX)))) {
+			fp_daemon = current;
 		}
 	}
 
@@ -2021,3 +2030,9 @@ COMPAT_SYSCALL_DEFINE5(execveat, int, fd,
 				  argv, envp, flags);
 }
 #endif
+
+struct task_struct *get_fp_daemon_task(void)
+{
+	return fp_daemon;
+}
+EXPORT_SYMBOL(get_fp_daemon_task);
