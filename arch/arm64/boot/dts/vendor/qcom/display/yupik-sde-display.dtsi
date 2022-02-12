@@ -8,77 +8,12 @@
 		label = "wb_display";
 	};
 
-	dsi_panel_pwr_supply_k9d: dsi_panel_pwr_supply_k9d {
-		#address-cells = <1>;
-		#size-cells = <0>;
-
-		qcom,panel-supply-entry@0 {
-			reg = <0>;
-			qcom,supply-name = "vddio";
-			qcom,supply-min-voltage = <1800000>;
-			qcom,supply-max-voltage = <1800000>;
-			qcom,supply-enable-load = <60700>;
-			qcom,supply-disable-load = <80>;
-			qcom,supply-post-on-sleep = <5>;
-			qcom,supply-pre-off-sleep = <4>;
-		};
-
-		qcom,panel-supply-entry@1 {
-			reg = <0>;
-			qcom,supply-name = "dvdd";
-			qcom,supply-min-voltage = <1200000>;
-			qcom,supply-max-voltage = <1200000>;
-			qcom,supply-enable-load = <60700>;
-			qcom,supply-disable-load = <80>;
-			qcom,supply-post-on-sleep = <5>;
-			qcom,supply-pre-off-sleep = <2>;
-		};
-
-		qcom,panel-supply-entry@2 {
-			reg = <1>;
-			qcom,supply-name = "vdd";
-			qcom,supply-min-voltage = <3000000>;
-			qcom,supply-max-voltage = <3000000>;
-			qcom,supply-enable-load = <10000>;
-			qcom,supply-disable-load = <0>;
-		};
-	};
-
-	dsi_panel_pwr_supply_k9d_0b: dsi_panel_pwr_supply_k9d_0b {
-		#address-cells = <1>;
-		#size-cells = <0>;
-
-		qcom,panel-supply-entry@0 {
-			reg = <0>;
-			qcom,supply-name = "vddio";
-			qcom,supply-min-voltage = <1800000>;
-			qcom,supply-max-voltage = <1800000>;
-			qcom,supply-enable-load = <60700>;
-			qcom,supply-disable-load = <80>;
-			qcom,supply-post-on-sleep = <5>;
-			qcom,supply-pre-off-sleep = <6>;
-		};
-
-		qcom,panel-supply-entry@1 {
-			reg = <1>;
-			qcom,supply-name = "vdd";
-			qcom,supply-min-voltage = <3000000>;
-			qcom,supply-max-voltage = <3000000>;
-			qcom,supply-enable-load = <10000>;
-			qcom,supply-disable-load = <80>;
-			qcom,supply-post-on-sleep = <5>;
-			qcom,supply-pre-off-sleep = <4>;
-		};
-
-		qcom,panel-supply-entry@2 {
-			reg = <2>;
-			qcom,supply-name = "dvdd";
-			qcom,supply-min-voltage = <1200000>;
-			qcom,supply-max-voltage = <1200000>;
-			qcom,supply-enable-load = <60700>;
-			qcom,supply-disable-load = <0>;
-			qcom,supply-post-on-sleep = <13>;
-		};
+	display_panel_dvdd: display_gpio_regulator@1 {
+		compatible = "qti-regulator-fixed";
+		regulator-name = "display_panel_dvdd";
+		gpio = <&tlmm 46 0>;
+		enable-active-high;
+		regulator-boot-on;
 	};
 };
 
@@ -123,6 +58,7 @@
 	qcom,panel-te-source = <0>;
 
 	vddio-supply = <&L8C>;
+	dvdd-supply = <&display_panel_dvdd>;
 	lab-supply = <&lcdb_ldo_vreg>;
 	ibb-supply = <&lcdb_ncp_vreg>;
 };
@@ -211,46 +147,3 @@
 	qcom,mdss-dsi-panel-status-value = <0x1c>;
 	qcom,mdss-dsi-panel-status-read-length = <1>;
 };
-
-&dsi_k9d_36_02_0a_dsc_cmd {
-	qcom,ulps-enabled;
-	qcom,suspend-ulps-enabled;
-	qcom,dsi-select-clocks = "mux_byte_clk0", "mux_pixel_clk0";
-	qcom,mdss-dsi-display-timings {
-		timing@0 {
-			qcom,mdss-dsi-panel-phy-timings = [00 18 06 06 21 20 06
-				06 04 02 04 00 15 16];
-			qcom,display-topology = <1 1 1>;
-			qcom,default-topology-index = <0>;
-		};
-
-		timing@1 {
-			qcom,mdss-dsi-panel-phy-timings = [00 18 06 06 21 20 06
-				06 04 02 04 00 15 16];
-			qcom,display-topology = <1 1 1>;
-			qcom,default-topology-index = <0>;
-		};
-	};
-};
-
-&dsi_k9d_42_0d_0b_dsc_cmd {
-	qcom,ulps-enabled;
-	qcom,suspend-ulps-enabled;
-	qcom,dsi-select-clocks = "mux_byte_clk0", "mux_pixel_clk0";
-	qcom,mdss-dsi-display-timings {
-		timing@0 {
-			qcom,mdss-dsi-panel-phy-timings = [00 18 06 06 21 20 06
-				06 04 02 04 00 15 16];
-			qcom,display-topology = <1 1 1>;
-			qcom,default-topology-index = <0>;
-
-		};
-
-		timing@1 {
-			qcom,mdss-dsi-panel-phy-timings = [00 18 06 06 21 20 06
-				06 04 02 04 00 15 16];
-			qcom,display-topology = <1 1 1>;
-			qcom,default-topology-index = <0>;
-		};
-	};
-}; 
