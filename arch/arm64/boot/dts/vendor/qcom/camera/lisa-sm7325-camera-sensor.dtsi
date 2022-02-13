@@ -1,3 +1,5 @@
+// Written by Divyanshu-Modi <Atom-X-Devs https://github.com/Atom-X-Devs>
+
 #include <dt-bindings/clock/qcom,camcc-yupik.h>
 
 &pm8008i_l2 {
@@ -307,7 +309,7 @@
 					 "cam_bob";
 		rgltr-cntrl-support;
 		rgltr-min-voltage = <1800000 1200000 2704000 0 3200000>;
-		rgltr-max-voltage = <1800000 1200000 2704000 0 3200000>;
+		rgltr-max-voltage = <1800000 1200000 2704000 0 3960000>;
 		rgltr-load-current = <10000 140000 180000 0 2000000>;
 		gpio-no-mux = <0>;
 		pinctrl-names = "cam_default", "cam_suspend";
