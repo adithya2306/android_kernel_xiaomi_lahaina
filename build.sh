@@ -4,12 +4,18 @@
 # Copyright (C) 2020-2021 Adithya R.
 
 SECONDS=0 # builtin bash timer
-ZIPNAME="QuicksilveR-lisa-$(date '+%Y%m%d-%H%M').zip"
 TC_DIR="$HOME/tc/clang-r445002"
 GCC_64_DIR="$HOME/tc/aarch64-linux-android-4.9"
 GCC_32_DIR="$HOME/tc/arm-linux-androideabi-4.9"
 AK3_DIR="$HOME/AnyKernel3"
 DEFCONFIG="lisa_defconfig"
+
+ZIPNAME="QuicksilveR-lisa-$(date '+%Y%m%d-%H%M').zip"
+
+if test -z "$(git rev-parse --show-cdup 2>/dev/null)" &&
+   head=$(git rev-parse --verify HEAD 2>/dev/null); then
+	ZIPNAME="${ZIPNAME::-4}-$(echo $head | cut -c1-8).zip"
+fi
 
 MAKE_PARAMS="O=out ARCH=arm64 CC=clang CLANG_TRIPLE=aarch64-linux-gnu- LLVM=1 \
 	CROSS_COMPILE=$GCC_64_DIR/bin/aarch64-linux-android- \
