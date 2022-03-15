@@ -2,8 +2,8 @@
 /*
  * Copyright (c) 2012-2021, The Linux Foundation. All rights reserved.
  * Copyright (C) 2021 XiaoMi, Inc.
+ * Copyright (c) 2022, Qualcomm Innovation Center, Inc. All rights reserved.
  */
-
 
 #ifndef _APR_AUDIO_V2_H_
 #define _APR_AUDIO_V2_H_
@@ -12272,6 +12272,9 @@ struct afe_param_id_clip_bank_sel {
 /* Supported LPASS CLK root*/
 #define Q6AFE_LPASS_CLK_ROOT_DEFAULT 0
 
+#define Q6AFE_LPASS_MCLK_IN0 1
+#define Q6AFE_LPASS_MCLK_IN1 2
+
 enum afe_lpass_clk_mode {
 	Q6AFE_LPASS_MODE_BOTH_INVALID,
 	Q6AFE_LPASS_MODE_CLK1_VALID,
@@ -12425,6 +12428,8 @@ enum afe_lpass_clk_mode {
 /* Clock ID for AHB HDMI input */
 #define Q6AFE_LPASS_CLK_ID_AHB_HDMI_INPUT                         0x400
 
+#define Q6AFE_LPASS_CLK_ID_SPDIF_CORE                             0x000
+
 /* Clock ID for the primary SPDIF output core. */
 #define AFE_CLOCK_SET_CLOCK_ID_PRI_SPDIF_OUTPUT_CORE              0x500
 /* Clock ID for the secondary SPDIF output core. */
@@ -12510,6 +12515,12 @@ struct afe_clk_set {
 #define AVS_BUILD_BRANCH_VERSION_V3		3
 
 #define AFE_PARAM_ID_CLOCK_SET_V2		0x000102E6
+
+#define AFE_CLOCK_SET_CLOCK_ROOT_DEFAULT	0x2
+#define AFE_CLOCK_DEFAULT_INTEGER_DIVIDER	0x0
+#define AFE_CLOCK_DEFAULT_M_VALUE		0x1
+#define AFE_CLOCK_DEFAULT_N_VALUE		0x2
+#define AFE_CLOCK_DEFAULT_D_VALUE		0x1
 
 #define AFE_API_VERSION_CLOCK_SET_V2		0x1
 
