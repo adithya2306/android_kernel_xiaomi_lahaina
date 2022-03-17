@@ -461,13 +461,13 @@ int mius_ultrasound_tx_port_set(struct snd_kcontrol *kcontrol,
 	}
 
 	ultrasound_tx_port_cache = ucontrol->value.integer.value[0];
-	printk(KERN_DEBUG "[MIUS] Via ULTRASOUND_TX_PORT_ID enable=%d", ultrasound_tx_port_cache);
+
 	if (ultrasound_tx_port_cache)
 		ret = mius_open_port(ULTRASOUND_TX_PORT_ID);
 	else
 		ret = mius_close_port(ULTRASOUND_TX_PORT_ID);
 
-	MI_PRINT_E("ultrasound_tx_port: enable=%d ret=%d",
+	MI_PRINT_D("ultrasound_tx_port: enable=%d ret=%d",
 		ultrasound_tx_port_cache, ret);
 
 	return ret;
@@ -808,7 +808,7 @@ int mius_system_configuration_param_get(
 
 	if (mc->shift >= MIUS_SYSTEM_CONFIGURATION_CUSTOM_SETTING_0 &&
 		mc->shift <= MIUS_SYSTEM_CONFIGURATION_CUSTOM_SETTING_15){
-		MI_PRINT_E("get MIUS_SYSTEM_CONFIGURATION_CUSTOM_SETTING_%02d",
+		MI_PRINT_D("get MIUS_SYSTEM_CONFIGURATION_CUSTOM_SETTING_%02d",
 			mc->shift - MIUS_SYSTEM_CONFIGURATION_CUSTOM_SETTING_0);
 		ucontrol->value.integer.value[0] = 0;
 		return 1;
