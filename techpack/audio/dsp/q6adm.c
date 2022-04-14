@@ -2,6 +2,7 @@
 /*
  * Copyright (c) 2012-2021, The Linux Foundation. All rights reserved.
  * Copyright (C) 2021 XiaoMi, Inc.
+ * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
  */
 #include <linux/module.h>
 #include <linux/slab.h>
@@ -2869,9 +2870,8 @@ static int adm_arrange_mch_map_v8(
 		goto non_mch_path;
 	};
 
-	if ((ep_payload->dev_num_channel > 2) &&
-		(port_channel_map[port_idx].set_channel_map ||
-		 multi_ch_maps[idx].set_channel_map)) {
+	if (port_channel_map[port_idx].set_channel_map ||
+		 multi_ch_maps[idx].set_channel_map) {
 		if (port_channel_map[port_idx].set_channel_map)
 			memcpy(ep_payload->dev_channel_mapping,
 				port_channel_map[port_idx].channel_mapping,
@@ -3446,6 +3446,8 @@ int adm_open_v2(int port_id, int path, int rate, int channel_mode, int topology,
 		    (topology == DS2_ADM_COPP_TOPOLOGY_ID) ||
 		    (topology == SRS_TRUMEDIA_TOPOLOGY_ID))
 			topology = DEFAULT_COPP_TOPOLOGY;
+	} else if (perf_mode == LOW_LATENCY_PCM_NOPROC_MODE) {
+		flags = ADM_LOW_LATENCY_NPROC_DEVICE_SESSION;
 	} else {
 		if ((path == ADM_PATH_COMPRESSED_RX) ||
 		    (path == ADM_PATH_COMPRESSED_TX))
