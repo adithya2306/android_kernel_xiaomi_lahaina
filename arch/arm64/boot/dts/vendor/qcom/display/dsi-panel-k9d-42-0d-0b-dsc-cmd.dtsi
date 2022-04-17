@@ -172,6 +172,7 @@
 	mi,panel-on-dimming-delay = <120>;
 	mi,panel-status-check-interval = <2000>;
 	mi,max-brightness-clone = <4095>;
+	mi,mdss-dsi-panel-dc-type = <0>;
 	mi,fp-display-on-optimize-flag;
 	mi,thermal-dimming-flag;
 	mi,esd-err-irq-gpio = <&tlmm 3 0x2004>;

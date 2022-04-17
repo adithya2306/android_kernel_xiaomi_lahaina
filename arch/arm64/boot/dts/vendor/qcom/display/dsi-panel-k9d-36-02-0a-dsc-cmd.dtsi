@@ -184,6 +184,7 @@
 	mi,hbm-bl-max-level = <2047>;
 	mi,panel-on-dimming-delay = <120>;
 	mi,max-brightness-clone = <4095>;
+	mi,mdss-dsi-panel-dc-type = <0>;
 	mi,fp-display-on-optimize-flag;
 	mi,thermal-dimming-flag;
 	mi,timming-switch-wait-for-te-flag;
@@ -214,18 +215,18 @@
 			mi,mdss-dsi-hbm-on-command-state = "dsi_lp_mode";
 			mi,mdss-dsi-hbm-off-command-state = "dsi_lp_mode";
 			mi,mdss-dsi-doze-hbm-command = [
-				15 01 00 00 00 00 02 2f 01 
-				39 01 00 00 00 00 05 51 00 
-				00 03 ff 05 01 00 00 14 00 
-				01 39 15 01 00 00 00 00 02 
-				65 01
+				15 01 00 00 00 00 02 2F 01
+				15 01 00 00 00 00 02 6F 02
+				39 01 00 00 00 00 03 51 03
+				FF 05 01 00 00 14 00 01 39
+				15 01 00 00 00 00 02 65 01
 			];
 			mi,mdss-dsi-doze-lbm-command = [
-				15 01 00 00 00 00 02 2f 01 
-				39 01 00 00 00 00 05 51 00 
-				00 01 ff 05 01 00 00 14 00 
-				01 39 15 01 00 00 00 00 02 
-				65 01
+				15 01 00 00 00 00 02 2F 01
+				15 01 00 00 00 00 02 6F 02
+				39 01 00 00 00 00 03 51 01
+				FF 05 01 00 00 14 00 01 39
+				15 01 00 00 00 00 02 65 01
 			];
 			mi,mdss-dsi-doze-hbm-command-state = "dsi_lp_mode";
 			mi,mdss-dsi-doze-lbm-command-state = "dsi_lp_mode";
@@ -272,18 +273,18 @@
 			mi,mdss-dsi-hbm-on-command-state = "dsi_lp_mode";
 			mi,mdss-dsi-hbm-off-command-state = "dsi_lp_mode";
 			mi,mdss-dsi-doze-hbm-command = [
-				15 01 00 00 00 00 02 2f 01 
-				39 01 00 00 00 00 05 51 00 
-				00 03 ff 05 01 00 00 14 00 
-				01 39 15 01 00 00 00 00 02 
-				65 01
+				15 01 00 00 00 00 02 2F 01
+				15 01 00 00 00 00 02 6F 02
+				39 01 00 00 00 00 03 51 03
+				FF 05 01 00 00 14 00 01 39
+				15 01 00 00 00 00 02 65 01
 			];
 			mi,mdss-dsi-doze-lbm-command = [
-				15 01 00 00 00 00 02 2f 01 
-				39 01 00 00 00 00 05 51 00 
-				00 01 ff 05 01 00 00 14 00 
-				01 39 15 01 00 00 00 00 02 
-				65 01
+				15 01 00 00 00 00 02 2F 01
+				15 01 00 00 00 00 02 6F 02
+				39 01 00 00 00 00 03 51 01
+				FF 05 01 00 00 14 00 01 39
+				15 01 00 00 00 00 02 65 01
 			];
 			mi,mdss-dsi-doze-hbm-command-state = "dsi_lp_mode";
 			mi,mdss-dsi-doze-lbm-command-state = "dsi_lp_mode";
