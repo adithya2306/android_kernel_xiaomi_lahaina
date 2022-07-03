@@ -197,8 +197,7 @@ static int mi_disp_notifier_cb(struct notifier_block *nb, unsigned long action,
 	struct mi_disp_notifier *evdata = data;
 	int *blank = evdata->data;
 
-	/* Parse framebuffer blank events as soon as they occur */
-	if (action != MI_DISP_DPMS_EARLY_EVENT)
+	if (action != MI_DISP_DPMS_EVENT)
 		return NOTIFY_OK;
 
 	/* Boost when the screen turns on and unboost when it turns off */
