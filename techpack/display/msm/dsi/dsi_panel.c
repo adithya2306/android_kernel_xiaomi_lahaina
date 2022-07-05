@@ -4943,6 +4943,9 @@ int dsi_panel_switch(struct dsi_panel *panel)
 		}
 	}
 
+	if (panel->mi_cfg.dc_type == 0 && panel->mi_cfg.feature_val[DISP_FEATURE_DC] == FEATURE_ON)
+		mi_dsi_dc_mode_enable(panel, true);
+
 	mutex_unlock(&panel->panel_lock);
 	DISP_UTC_INFO("%s panel: DSI_CMD_SET_TIMING_SWITCH\n", panel->type);
 	return rc;
