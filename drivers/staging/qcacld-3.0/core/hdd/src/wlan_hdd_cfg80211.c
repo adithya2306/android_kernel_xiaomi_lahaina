@@ -6017,6 +6017,11 @@ static int __wlan_hdd_cfg80211_disable_dfs_chan_scan(struct wiphy *wiphy,
 	bool enable_dfs_scan = true;
 	hdd_enter_dev(dev);
 
+	if (QDF_GLOBAL_FTM_MODE == hdd_get_conparam()) {
+		hdd_err("Command not allowed in FTM mode");
+		return -EPERM;
+	}
+
 	ret_val = wlan_hdd_validate_context(hdd_ctx);
 	if (ret_val)
 		return ret_val;
@@ -6988,6 +6993,8 @@ int wlan_hdd_send_roam_auth_event(struct hdd_adapter *adapter, uint8_t *bssid,
 			*((uint64_t *)roam_info_ptr->replay_ctr));
 
 	} else {
+		wlan_acquire_peer_key_wakelock(hdd_ctx->pdev,
+					       roam_info_ptr->bssid.bytes);
 		hdd_debug("No Auth Params TLV's");
 		if (nla_put_u8(skb, QCA_WLAN_VENDOR_ATTR_ROAM_AUTH_AUTHORIZED,
 					false)) {
@@ -11423,6 +11430,11 @@ __wlan_hdd_cfg80211_set_ns_offload(struct wiphy *wiphy,
 
 	hdd_enter_dev(wdev->netdev);
 
+	if (QDF_GLOBAL_FTM_MODE == hdd_get_conparam()) {
+		hdd_err("Command not allowed in FTM mode");
+		return -EPERM;
+	}
+
 	status = wlan_hdd_validate_context(hdd_ctx);
 	if (0 != status)
 		return status;
@@ -11606,6 +11618,11 @@ static int __wlan_hdd_cfg80211_get_preferred_freq_list(struct wiphy *wiphy,
 	struct policy_mgr_pcl_chan_weights *chan_weights;
 
 	hdd_enter_dev(wdev->netdev);
+
+	if (QDF_GLOBAL_FTM_MODE == hdd_get_conparam()) {
+		hdd_err("Command not allowed in FTM mode");
+		return -EPERM;
+	}
 
 	ret = wlan_hdd_validate_context(hdd_ctx);
 	if (ret)
@@ -11801,6 +11818,11 @@ static int __wlan_hdd_cfg80211_set_probable_oper_channel(struct wiphy *wiphy,
 	uint32_t ch_freq;
 
 	hdd_enter_dev(ndev);
+
+	if (QDF_GLOBAL_FTM_MODE == hdd_get_conparam()) {
+		hdd_err("Command not allowed in FTM mode");
+		return -EPERM;
+	}
 
 	ret = wlan_hdd_validate_context(hdd_ctx);
 	if (ret)
@@ -12887,6 +12909,11 @@ static int __wlan_hdd_cfg80211_setband(struct wiphy *wiphy,
 
 	hdd_enter();
 
+	if (QDF_GLOBAL_FTM_MODE == hdd_get_conparam()) {
+		hdd_err("Command not allowed in FTM mode");
+		return -EPERM;
+	}
+
 	ret = wlan_hdd_validate_context(hdd_ctx);
 	if (ret)
 		return ret;
@@ -13580,6 +13607,11 @@ static int __wlan_hdd_cfg80211_getband(struct wiphy *wiphy,
 	uint32_t reg_wifi_band_bitmap, vendor_band_mask;
 
 	hdd_enter();
+
+	if (QDF_GLOBAL_FTM_MODE == hdd_get_conparam()) {
+		hdd_err("Command not allowed in FTM mode");
+		return -EPERM;
+	}
 
 	ret = wlan_hdd_validate_context(hdd_ctx);
 	if (ret)
@@ -15322,6 +15354,11 @@ static int __wlan_hdd_cfg80211_get_usable_channel(struct wiphy *wiphy,
 	uint32_t count = 0;
 	QDF_STATUS status;
 
+	if (QDF_GLOBAL_FTM_MODE == hdd_get_conparam()) {
+		hdd_err("Command not allowed in FTM mode");
+		return -EPERM;
+	}
+
 	ret = wlan_hdd_validate_context(hdd_ctx);
 	if (0 != ret)
 		return ret;
@@ -15443,6 +15480,11 @@ static int __wlan_hdd_cfg80211_set_roam_events(struct wiphy *wiphy,
 	QDF_STATUS status;
 	int ret;
 	uint8_t config, state, param = 0;
+
+	if (QDF_GLOBAL_FTM_MODE == hdd_get_conparam()) {
+		hdd_err("Command not allowed in FTM mode");
+		return -EPERM;
+	}
 
 	ret = wlan_hdd_validate_context(hdd_ctx);
 	if (ret != 0) {
@@ -15574,6 +15616,11 @@ static int __wlan_hdd_cfg80211_get_chain_rssi(struct wiphy *wiphy,
 	};
 
 	hdd_enter();
+
+	if (QDF_GLOBAL_FTM_MODE == hdd_get_conparam()) {
+		hdd_err("Command not allowed in FTM mode");
+		return -EPERM;
+	}
 
 	retval = wlan_hdd_validate_context(hdd_ctx);
 	if (0 != retval)
@@ -17198,15 +17245,11 @@ int wlan_hdd_cfg80211_init(struct device *dev,
 	wiphy->signal_type = CFG80211_SIGNAL_TYPE_MBM;
 	wiphy->max_remain_on_channel_duration = MAX_REMAIN_ON_CHANNEL_DURATION;
 
-	if (cds_get_conparam() != QDF_GLOBAL_FTM_MODE) {
-		wiphy->n_vendor_commands =
-				ARRAY_SIZE(hdd_wiphy_vendor_commands);
-		wiphy->vendor_commands = hdd_wiphy_vendor_commands;
+	wiphy->n_vendor_commands = ARRAY_SIZE(hdd_wiphy_vendor_commands);
+	wiphy->vendor_commands = hdd_wiphy_vendor_commands;
 
-		wiphy->vendor_events = wlan_hdd_cfg80211_vendor_events;
-		wiphy->n_vendor_events =
-				ARRAY_SIZE(wlan_hdd_cfg80211_vendor_events);
-	}
+	wiphy->vendor_events = wlan_hdd_cfg80211_vendor_events;
+	wiphy->n_vendor_events = ARRAY_SIZE(wlan_hdd_cfg80211_vendor_events);
 
 #ifdef QCA_HT_2040_COEX
 	wiphy->features |= NL80211_FEATURE_AP_MODE_CHAN_WIDTH_CHANGE;
