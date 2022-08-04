@@ -148,3 +148,42 @@
 	qcom,mdss-dsi-panel-status-value = <0x1c>;
 	qcom,mdss-dsi-panel-status-read-length = <1>;
 };
+
+&dsi_k9d_36_02_0a_dsc_cmd {
+	qcom,ulps-enabled;
+	qcom,esd-check-enabled;
+	qcom,esd-aod-check-enabled;
+	qcom,mdss-dsi-panel-status-check-mode = "reg_read";
+	qcom,mdss-dsi-panel-status-offset-command = [
+		39 01 00 00 00 00 05 FF AA 55 A5 81
+		15 01 00 00 00 00 02 6F 0F
+	];
+	qcom,mdss-dsi-panel-status-offset-command-state = "dsi_lp_mode";
+	qcom,mdss-dsi-panel-status-command = [06 01 00 00 00 00 01 FA];
+	qcom,mdss-dsi-panel-status-command-state = "dsi_lp_mode";
+	qcom,mdss-dsi-panel-status-value = <0x00>;
+	qcom,mdss-dsi-panel-status-read-length = <1>;
+};
+
+&dsi_k9d_42_0d_0b_dsc_cmd {
+	qcom,ulps-enabled;
+	qcom,esd-check-enabled;
+	qcom,esd-aod-check-enabled;
+	qcom,mdss-dsi-panel-status-check-mode = "reg_read";
+	qcom,mdss-dsi-panel-status-offset-command = [
+		39 01 00 00 00 00 03 FF 5A 80
+		15 01 00 00 00 00 02 65 37
+	];
+	qcom,mdss-dsi-panel-status-offset-command-state = "dsi_lp_mode";
+	qcom,mdss-dsi-panel-status-command = [
+		06 01 00 00 00 00 01 F5
+		06 01 00 00 00 00 01 0A
+		06 01 00 00 00 00 01 AA
+	];
+	qcom,mdss-dsi-panel-status-command-state = "dsi_lp_mode";
+	qcom,mdss-dsi-panel-status-value = <
+		0x00 0x00 0x00 0x9c 0x53
+		0x00 0x00 0x00 0xdc 0x93
+	>;
+	qcom,mdss-dsi-panel-status-read-length = <3 1 1>;
+};
