@@ -5842,6 +5842,12 @@ typedef struct {
 } wmi_frame_pn_params;
 
 typedef struct {
+    A_UINT32 tlv_header; /* TLV tag (WMITLV_TAG_STRUC_wmi_is_my_frame) */
+    A_UINT32 mgmt_frm_sub_type; /* to indicate which sub-type of MGMT frame */
+    A_UINT32 is_my_frame; /* to indicate frame is sent to this BSSID */
+} wmi_is_my_mgmt_frame;
+
+typedef struct {
     A_UINT32 tlv_header; /* TLV tag and len; tag equals WMITLV_TAG_STRUC_wmi_mgmt_ml_info */
     /**
      * CU vdev map to initmate about the on-going Critical update
@@ -12086,6 +12092,10 @@ typedef struct {
 #define WMI_MLO_FLAGS_SET_PEER_ID_VALID(mlo_flags, value)   WMI_SET_BITS(mlo_flags, 4, 1, value)
 #define WMI_MLO_FLAGS_GET_MCAST_VDEV(mlo_flags)             WMI_GET_BITS(mlo_flags, 5, 1)
 #define WMI_MLO_FLAGS_SET_MCAST_VDEV(mlo_flags, value)      WMI_SET_BITS(mlo_flags, 5, 1, value)
+#define WMI_MLO_FLAGS_GET_EMLSR_SUPPORT(mlo_flags)          WMI_GET_BITS(mlo_flags, 6, 1)
+#define WMI_MLO_FLAGS_SET_EMLSR_SUPPORT(mlo_flags, value)   WMI_SET_BITS(mlo_flags, 6, 1, value)
+#define WMI_MLO_FLAGS_GET_FORCE_LINK_INACTIVE(mlo_flags)    WMI_GET_BITS(mlo_flags, 7, 1)
+#define WMI_MLO_FLAGS_SET_FORCE_LINK_INACTIVE(mlo_flags, value) WMI_SET_BITS(mlo_flags, 7, 1, value)
 
 /* this structure used for pass mlo flags*/
 typedef struct {
