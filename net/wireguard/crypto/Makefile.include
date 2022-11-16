@@ -31,9 +31,6 @@ zinc-$(CONFIG_ZINC_ARCH_MIPS64) += poly1305/poly1305-mips64.o
 
 zinc-y += chacha20poly1305.o
 
-zinc-y += blake2s/blake2s.o
-zinc-$(CONFIG_ZINC_ARCH_X86_64) += blake2s/blake2s-x86_64.o
-
 zinc-y += curve25519/curve25519.o
 zinc-$(CONFIG_ZINC_ARCH_ARM) += curve25519/curve25519-arm.o
 

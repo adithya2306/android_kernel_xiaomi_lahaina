@@ -898,11 +898,6 @@ static inline void skb_mark_not_on_list(struct sk_buff *skb)
 #endif
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 5, 0)
-#define blake2s_init zinc_blake2s_init
-#define blake2s_init_key zinc_blake2s_init_key
-#define blake2s_update zinc_blake2s_update
-#define blake2s_final zinc_blake2s_final
-#define blake2s_hmac zinc_blake2s_hmac
 #define chacha20 zinc_chacha20
 #define hchacha20 zinc_hchacha20
 #define chacha20poly1305_encrypt zinc_chacha20poly1305_encrypt
@@ -917,8 +912,6 @@ static inline void skb_mark_not_on_list(struct sk_buff *skb)
 #define poly1305_init zinc_poly1305_init
 #define poly1305_update zinc_poly1305_update
 #define poly1305_final zinc_poly1305_final
-#define blake2s_compress_ssse3 zinc_blake2s_compress_ssse3
-#define blake2s_compress_avx512 zinc_blake2s_compress_avx512
 #define poly1305_init_arm zinc_poly1305_init_arm
 #define poly1305_blocks_arm zinc_poly1305_blocks_arm
 #define poly1305_emit_arm zinc_poly1305_emit_arm
