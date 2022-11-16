@@ -196,8 +196,8 @@ static void dsi_bridge_pre_enable(struct drm_bridge *bridge)
 		return;
 	}
 
-	atomic_set(&c_bridge->display->panel->esd_recovery_pending, 0);
-	mi_cfg = &c_bridge->display->panel->mi_cfg;
+	if (bridge->encoder->crtc->state->active_changed)
+		atomic_set(&c_bridge->display->panel->esd_recovery_pending, 0);
 
 	/* By this point mode should have been validated through mode_fixup */
 	rc = dsi_display_set_mode(c_bridge->display,
@@ -212,6 +212,8 @@ static void dsi_bridge_pre_enable(struct drm_bridge *bridge)
 	notify_data.data = &power_mode;
 	notify_data.disp_id = mi_get_disp_id(c_bridge->display);
 	mi_disp_notifier_call_chain(MI_DISP_DPMS_EARLY_EVENT, &notify_data);
+
+	mi_cfg = &c_bridge->display->panel->mi_cfg;
 
 	if ((!strcmp(c_bridge->display->display_type, "primary")) &&
 			atomic_read(&prim_panel_is_on) &&
