@@ -1439,7 +1439,6 @@ static int goodix_ts_irq_setup(struct goodix_ts_core *core_data)
 
 	core_data->pm_qos_spi_req.type = PM_QOS_REQ_AFFINE_IRQ;
 	core_data->pm_qos_spi_req.irq = core_data->bus->irq;
-	irq_set_perf_affinity(core_data->pm_qos_spi_req.irq, IRQF_PERF_AFFINE);
 	pm_qos_add_request(&core_data->pm_qos_spi_req, PM_QOS_CPU_DMA_LATENCY,
 			PM_QOS_DEFAULT_VALUE);
 
@@ -1452,7 +1451,7 @@ static int goodix_ts_irq_setup(struct goodix_ts_core *core_data)
 	ret = devm_request_threaded_irq(&core_data->pdev->dev,
 					core_data->irq, NULL,
 					goodix_ts_threadirq_func,
-					ts_bdata->irq_flags | IRQF_ONESHOT | IRQF_PERF_AFFINE,
+					ts_bdata->irq_flags | IRQF_ONESHOT,
 					GOODIX_CORE_DRIVER_NAME,
 					core_data);
 	if (ret < 0)
