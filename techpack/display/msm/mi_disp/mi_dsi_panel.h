@@ -308,6 +308,9 @@ int mi_dsi_panel_set_brightness_clone(struct dsi_panel *panel,
 int mi_dsi_panel_get_brightness_clone(struct dsi_panel *panel,
 			u32 *brightness_clone);
 
+int mi_dsi_panel_get_max_brightness_clone(struct dsi_panel *panel,
+			u32 *max_brightness_clone);
+
 void mi_dsi_panel_demura_comp(struct dsi_panel *panel,
 			u32 bl_lvl);
 

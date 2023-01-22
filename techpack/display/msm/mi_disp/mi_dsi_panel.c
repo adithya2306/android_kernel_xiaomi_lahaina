@@ -1531,6 +1531,26 @@ int mi_dsi_panel_get_brightness_clone(struct dsi_panel *panel,
 	return 0;
 }
 
+int mi_dsi_panel_get_max_brightness_clone(struct dsi_panel *panel,
+			u32 *max_brightness_clone)
+{
+	struct mi_dsi_panel_cfg *mi_cfg;
+
+	if (!panel) {
+		DISP_ERROR("invalid params\n");
+		return -EINVAL;
+	}
+
+	mutex_lock(&panel->panel_lock);
+
+	mi_cfg = &panel->mi_cfg;
+	*max_brightness_clone =  mi_cfg->max_brightness_clone;
+
+	mutex_unlock(&panel->panel_lock);
+
+	return 0;
+}
+
 int mi_dsi_panel_nolp(struct dsi_panel *panel)
 {
 	struct mi_dsi_panel_cfg *mi_cfg;

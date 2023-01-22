@@ -464,6 +464,21 @@ int mi_dsi_display_get_brightness_clone(void *display,
 				brightness_clone);
 }
 
+
+int mi_dsi_display_get_max_brightness_clone(void *display,
+			u32 *max_brightness_clone)
+{
+	struct dsi_display *dsi_display = (struct dsi_display *)display;
+
+	if (!dsi_display) {
+		DISP_ERROR("Invalid display ptr\n");
+		return -EINVAL;
+	}
+
+	return mi_dsi_panel_get_max_brightness_clone(dsi_display->panel,
+				max_brightness_clone);
+}
+
 ssize_t mi_dsi_display_get_hw_vsync_info(void *display,
 			char *buf, size_t size)
 {

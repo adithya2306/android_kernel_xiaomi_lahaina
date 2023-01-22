@@ -69,6 +69,9 @@ int mi_dsi_display_set_brightness_clone(void *display,
 int mi_dsi_display_get_brightness_clone(void *display,
 			u32 *brightness_clone);
 
+int mi_dsi_display_get_max_brightness_clone(void *display,
+			u32 *max_brightness_clone);
+
 ssize_t mi_dsi_display_get_hw_vsync_info(void *display,
 			char *buf, size_t size);
 
