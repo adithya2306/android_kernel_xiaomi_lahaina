@@ -43,32 +43,31 @@ kernel="out/arch/arm64/boot/Image"
 dtb="out/arch/arm64/boot/dts/vendor/qcom/yupik.dtb"
 dtbo="out/arch/arm64/boot/dts/vendor/qcom/lisa-sm7325-overlay.dtbo"
 
-if [ -f "$kernel" ] && [ -f "$dtb" ] && [ -f "$dtbo" ]; then
-	echo -e "\nKernel compiled succesfully! Zipping up...\n"
-	if [ -d "$AK3_DIR" ]; then
-		cp -r $AK3_DIR AnyKernel3
-		git -C AnyKernel3 checkout lisa &> /dev/null
-	elif ! git clone -q https://github.com/ghostrider-reborn/AnyKernel3 -b lisa; then
-		echo -e "\nAnyKernel3 repo not found locally and couldn't clone from GitHub! Aborting..."
-		exit 1
-	fi
-	cp $kernel AnyKernel3
-	cp $dtb AnyKernel3/dtb
-	python2 scripts/dtc/libfdt/mkdtboimg.py create AnyKernel3/dtbo.img --page_size=4096 $dtbo
-	cp $(find out/modules/lib/modules/5.4* -name '*.ko') AnyKernel3/modules/vendor/lib/modules/
-	cp out/modules/lib/modules/5.4*/modules.{alias,dep,softdep} AnyKernel3/modules/vendor/lib/modules
-	cp out/modules/lib/modules/5.4*/modules.order AnyKernel3/modules/vendor/lib/modules/modules.load
-	sed -i 's/\(kernel\/[^: ]*\/\)\([^: ]*\.ko\)/\/vendor\/lib\/modules\/\2/g' AnyKernel3/modules/vendor/lib/modules/modules.dep
-	sed -i 's/.*\///g' AnyKernel3/modules/vendor/lib/modules/modules.load
-	rm -rf out/arch/arm64/boot out/modules
-	cd AnyKernel3
-	zip -r9 "../$ZIPNAME" * -x .git README.md *placeholder
-	cd ..
-	rm -rf AnyKernel3
-	echo -e "\nCompleted in $((SECONDS / 60)) minute(s) and $((SECONDS % 60)) second(s) !"
-	echo "Zip: $ZIPNAME"
-	[ -x "$(command -v gdrive)" ] && gdrive upload --share "$ZIPNAME"
-else
+if [ ! -f "$kernel" ] || [ ! -f "$dtb" ] || [ ! -f "$dtbo" ]; then
 	echo -e "\nCompilation failed!"
 	exit 1
 fi
+
+echo -e "\nKernel compiled succesfully! Zipping up...\n"
+if [ -d "$AK3_DIR" ]; then
+	cp -r $AK3_DIR AnyKernel3
+	git -C AnyKernel3 checkout lisa &> /dev/null
+elif ! git clone -q https://github.com/ghostrider-reborn/AnyKernel3 -b lisa; then
+	echo -e "\nAnyKernel3 repo not found locally and couldn't clone from GitHub! Aborting..."
+	exit 1
+fi
+cp $kernel AnyKernel3
+cp $dtb AnyKernel3/dtb
+python2 scripts/dtc/libfdt/mkdtboimg.py create AnyKernel3/dtbo.img --page_size=4096 $dtbo
+cp $(find out/modules/lib/modules/5.4* -name '*.ko') AnyKernel3/modules/vendor/lib/modules/
+cp out/modules/lib/modules/5.4*/modules.{alias,dep,softdep} AnyKernel3/modules/vendor/lib/modules
+cp out/modules/lib/modules/5.4*/modules.order AnyKernel3/modules/vendor/lib/modules/modules.load
+sed -i 's/\(kernel\/[^: ]*\/\)\([^: ]*\.ko\)/\/vendor\/lib\/modules\/\2/g' AnyKernel3/modules/vendor/lib/modules/modules.dep
+sed -i 's/.*\///g' AnyKernel3/modules/vendor/lib/modules/modules.load
+rm -rf out/arch/arm64/boot out/modules
+cd AnyKernel3
+zip -r9 "../$ZIPNAME" * -x .git README.md *placeholder
+cd ..
+rm -rf AnyKernel3
+echo -e "\nCompleted in $((SECONDS / 60)) minute(s) and $((SECONDS % 60)) second(s) !"
+echo "Zip: $ZIPNAME"
