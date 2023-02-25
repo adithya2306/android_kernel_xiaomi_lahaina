@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-only
 /* Copyright (c) 2012-2021, The Linux Foundation. All rights reserved.
  * Copyright (C) 2021 XiaoMi, Inc.
- * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
  */
 /*
 * Add support for 24 and 32bit format for ASM loopback and playback session.
@@ -1329,6 +1329,14 @@ static int msm_pcm_capture_copy(struct snd_pcm_substream *substream,
 			xfer = size;
 		offset = prtd->in_frame_info[idx].offset;
 		pr_debug("Offset value = %d\n", offset);
+
+		if (offset >= size) {
+			pr_err("%s: Invalid dsp buf offset\n", __func__);
+			ret = -EFAULT;
+			q6asm_cpu_buf_release(OUT, prtd->audio_client);
+			goto fail;
+		}
+
 		if (size == 0 || size < prtd->pcm_count) {
 			memset(bufptr + offset + size, 0, prtd->pcm_count - size);
 			if (fbytes > prtd->pcm_count)
