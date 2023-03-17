@@ -1818,6 +1818,7 @@ static int msm_routing_find_topology_on_index(int fedai_id, int session_type, in
 	if (cal_block != NULL) {
 		topology = ((struct audio_cal_info_adm_top *)
 			    cal_block->cal_info)->topology;
+		cal_utils_mark_cal_used(cal_block);
 	}
 	mutex_unlock(&cal_data[idx]->lock);
 	return topology;
@@ -32338,6 +32339,9 @@ static int msm_pcm_routing_prepare(struct snd_pcm_substream *substream)
 				(fdai->passthr_mode == LEGACY_PCM))
 				msm_pcm_routing_cfg_pp(port_id, copp_idx,
 						       topology, channels);
+			if(msm_pcm_routing_channel_mixer(i, fdai->perf_mode,fdai->strm_id, session_type)){
+				pr_err("%s: failed to send channel mixer \n", __func__);
+			}
 		}
 	}
 
