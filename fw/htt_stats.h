@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2017-2021 The Linux Foundation. All rights reserved.
- * Copyright (c) 2021-2022 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2021-2023 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -519,6 +519,14 @@ enum htt_dbg_ext_stats_type {
      */
     HTT_DBG_PDEV_MBSSID_CTRL_FRAME_STATS = 54,
 
+    /** HTT_DBG_SOC_SSR_STATS
+     * PARAMS:
+     *    - No Params
+     * RESP MSG:
+     *    - htt_umac_ssr_stats_tlv
+     */
+    HTT_DBG_SOC_SSR_STATS = 55,
+
 
     /* keep this last */
     HTT_DBG_NUM_EXT_STATS = 256,
@@ -927,6 +935,20 @@ typedef struct {
     htt_tlv_hdr_t tlv_hdr;
     A_UINT32      flush_errs[1]; /* HTT_TX_PDEV_MAX_FLUSH_REASON_STATS */
 } htt_tx_pdev_stats_flush_tlv_v;
+
+#define HTT_TX_PDEV_STATS_MLO_ABORT_TLV_SZ(_num_elems) (sizeof(A_UINT32) * (_num_elems))
+/* NOTE: Variable length TLV, use length spec to infer array size */
+typedef struct {
+    htt_tlv_hdr_t tlv_hdr;
+    A_UINT32      mlo_abort_cnt[]; /* HTT_TX_PDEV_MAX_MLO_ABORT_REASON_STATS */
+} htt_tx_pdev_stats_mlo_abort_tlv_v;
+
+#define HTT_TX_PDEV_STATS_MLO_TXOP_ABORT_TLV_SZ(_num_elems) (sizeof(A_UINT32) * (_num_elems))
+/* NOTE: Variable length TLV, use length spec to infer array size */
+typedef struct {
+    htt_tlv_hdr_t tlv_hdr;
+    A_UINT32      mlo_txop_abort_cnt[]; /* HTT_TX_PDEV_MAX_MLO_ABORT_REASON_STATS */
+} htt_tx_pdev_stats_mlo_txop_abort_tlv_v;
 
 #define HTT_TX_PDEV_STATS_SIFS_TLV_SZ(_num_elems) (sizeof(A_UINT32) * (_num_elems))
 /* NOTE: Variable length TLV, use length spec to infer array size */
@@ -1467,6 +1489,17 @@ typedef struct _htt_tx_tid_stats_v1_tlv {
     A_UINT32 mlo_flush_partner_info_high;
     A_UINT32 mlo_flush_initator_info_low;
     A_UINT32 mlo_flush_initator_info_high;
+    /*
+     * head_msdu_tqm_timestamp_us:
+     *     MSDU enqueue timestamp (TQM reference timestamp) for the MSDU
+     *     at the head of the MPDU queue
+     * head_msdu_tqm_latency_us:
+     *     The age of the MSDU that is at the head of the MPDU queue,
+     *     i.e. the delta between the current TQM time and the MSDU's
+     *     enqueue timestamp.
+     */
+    A_UINT32 head_msdu_tqm_timestamp_us;
+    A_UINT32 head_msdu_tqm_latency_us;
 } htt_tx_tid_stats_v1_tlv;
 
 #define HTT_RX_TID_STATS_SW_PEER_ID_M 0x0000ffff
@@ -3885,6 +3918,7 @@ typedef struct {
     A_UINT32 total_get_mpdu_head_info_cmds_by_sched_algo_la_query;
     A_UINT32 total_get_mpdu_head_info_cmds_by_tac;
     A_UINT32 total_gen_mpdu_cmds_by_sched_algo_la_query;
+    A_UINT32 high_prio_q_not_empty;
 } htt_tx_tqm_cmn_stats_tlv;
 
 typedef struct {
@@ -4965,6 +4999,8 @@ typedef struct {
     A_UINT32 ax_su_embedded_trigger_data_ppdu_err;
     /** sta side trigger stats */
     A_UINT32 trigger_type_11be[HTT_TX_PDEV_STATS_NUM_11BE_TRIGGER_TYPES];
+    /** Stats for Extra EHT LTF */
+    A_UINT32 extra_eht_ltf;
 } htt_tx_pdev_rate_stats_tlv;
 
 typedef struct {
@@ -6217,8 +6253,11 @@ typedef struct {
      */
 } htt_pdev_cca_stats_hist_v1_tlv;
 
-#define HTT_TWT_SESSION_FLAG_FLOW_ID_M 0x0000ffff
+#define HTT_TWT_SESSION_FLAG_FLOW_ID_M 0x0000000f
 #define HTT_TWT_SESSION_FLAG_FLOW_ID_S 0
+
+#define HTT_TWT_SESSION_FLAG_BTWT_PEER_CNT_M 0x0000fff0
+#define HTT_TWT_SESSION_FLAG_BTWT_PEER_CNT_S 4
 
 #define HTT_TWT_SESSION_FLAG_BCAST_TWT_M 0x00010000
 #define HTT_TWT_SESSION_FLAG_BCAST_TWT_S 16
@@ -6237,6 +6276,16 @@ typedef struct {
     do { \
         HTT_CHECK_SET_VAL(HTT_TWT_SESSION_FLAG_FLOW_ID, _val); \
         ((_var) |= ((_val) << HTT_TWT_SESSION_FLAG_FLOW_ID_S)); \
+    } while (0)
+
+#define HTT_TWT_SESSION_FLAG_BTWT_PEER_CNT_GET(_var) \
+    (((_var) & HTT_TWT_SESSION_FLAG_BTWT_PEER_CNT_M) >> \
+     HTT_TWT_SESSION_FLAG_BTWT_PEER_CNT_S)
+
+#define HTT_TWT_SESSION_FLAG_BTWT_PEER_CNT_SET(_var, _val) \
+    do { \
+        HTT_CHECK_SET_VAL(HTT_TWT_SESSION_FLAG_BTWT_PEER_CNT, _val); \
+        ((_var) |= ((_val) << HTT_TWT_SESSION_FLAG_BTWT_PEER_CNT_S)); \
     } while (0)
 
 #define HTT_TWT_SESSION_FLAG_BCAST_TWT_GET(_var) \
@@ -6944,6 +6993,7 @@ typedef enum {
     HTT_STATS_RC_MODE_DLMUMIMO = 1,
     HTT_STATS_RC_MODE_DLOFDMA  = 2,
     HTT_STATS_RC_MODE_ULMUMIMO = 3,
+    HTT_STATS_RC_MODE_ULOFDMA  = 4,
 } htt_stats_rc_mode;
 
 typedef struct {
@@ -7360,6 +7410,11 @@ typedef struct {
 #define HTT_MAX_RX_PKT_CRC_PASS_CNT 8
 #define HTT_MAX_PER_BLK_ERR_CNT 20
 #define HTT_MAX_RX_OTA_ERR_CNT 14
+#define HTT_MAX_RX_PKT_CNT_EXT 4
+#define HTT_MAX_RX_PKT_CRC_PASS_CNT_EXT 4
+#define HTT_MAX_RX_PKT_MU_CNT 14
+#define HTT_MAX_TX_PKT_CNT 10
+#define HTT_MAX_PHY_TX_ABORT_CNT 10
 
 typedef enum {
     HTT_STATS_CHANNEL_HALF_RATE          = 0x0001,   /* Half rate */
@@ -7474,13 +7529,13 @@ typedef struct {
     /** rx_pkt_cnt -
      * Received EOP (end-of-packet) count per packet type;
      * [0] = 11a; [1] = 11b; [2] = 11n; [3] = 11ac; [4] = 11ax; [5] = GF
-     * [6-7]=RSVD
+     * [6] = EHT; [7]=RSVD; [6] = Applicable only for BE
      */
     A_UINT32 rx_pkt_cnt[HTT_MAX_RX_PKT_CNT];
     /** rx_pkt_crc_pass_cnt -
      * Received EOP (end-of-packet) count per packet type;
      * [0] = 11a; [1] = 11b; [2] = 11n; [3] = 11ac; [4] = 11ax; [5] = GF
-     * [6-7]=RSVD
+     * [6] = EHT; [7]=RSVD; [6] = Applicable only for BE
      */
     A_UINT32 rx_pkt_crc_pass_cnt[HTT_MAX_RX_PKT_CRC_PASS_CNT];
     /** per_blk_err_cnt -
@@ -7500,6 +7555,38 @@ typedef struct {
      * [9-13]=RSVD
      */
     A_UINT32 rx_ota_err_cnt[HTT_MAX_RX_OTA_ERR_CNT];
+    /** rx_pkt_cnt_ext -
+     * Received EOP (end-of-packet) count per packet type for BE;
+     * [0] = WUR; [1] = AZ; [2-3]=RVSD
+     */
+    A_UINT32 rx_pkt_cnt_ext[HTT_MAX_RX_PKT_CNT_EXT];
+    /** rx_pkt_crc_pass_cnt_ext -
+     * Received EOP (end-of-packet) count per packet type for BE;
+     * [0] = WUR; [1] = AZ; [2-3]=RVSD
+     */
+    A_UINT32 rx_pkt_crc_pass_cnt_ext[HTT_MAX_RX_PKT_CRC_PASS_CNT_EXT];
+    /** rx_pkt_mu_cnt -
+     * RX MU MIMO+OFDMA packet count per packet type for BE;
+     * [0] = 11ax OFDMA; [1] = 11ax OFDMA+MUMIMO; [2] = 11be OFDMA;
+     * [3] = 11be OFDMA+MUMIMO; [4] = 11ax MIMO; [5] = 11be MIMO;
+     * [6] = 11ax OFDMA; [7] = 11ax OFDMA+MUMIMO; [8] = 11be OFDMA;
+     * [9] = 11be OFDMA+MUMIMO; [10] = 11ax MIMO; [11] = 11be MIMO;
+     * [12-13]=RSVD
+     */
+    A_UINT32 rx_pkt_mu_cnt[HTT_MAX_RX_PKT_MU_CNT];
+    /** tx_pkt_cnt -
+     * num of transfered packet count per packet type;
+     * [0] = 11a; [1] = 11b; [2] = 11n; [3] = 11ac; [4] = 11ax; [5] = GF;
+     * [6]= EHT; [7] = WUR; [8] = AZ; [9]=RSVD; [6-8] = Applicable only for BE
+     */
+    A_UINT32 tx_pkt_cnt[HTT_MAX_TX_PKT_CNT];
+    /** phy_tx_abort_cnt -
+     * phy tx abort after each tlv;
+     * [0] = PRE-PHY desc tlv; [1] = PHY desc tlv; [2] = LSIGA tlv;
+     * [3] = LSIGB tlv; [4] = Per User tlv; [5] = HESIGB tlv;
+     * [6] = Service tlv; [7] = Tx Packet End tlv; [8-9]=RSVD;
+     */
+    A_UINT32 phy_tx_abort_cnt[HTT_MAX_PHY_TX_ABORT_CNT];
 } htt_phy_counters_tlv;
 
 typedef struct {
@@ -8754,6 +8841,37 @@ typedef struct {
 typedef struct {
     htt_pdev_bw_mgr_stats_tlv bw_mgr_tlv;
 } htt_pdev_bw_mgr_stats_t;
+
+typedef struct {
+    A_UINT32 total_done;
+    A_UINT32 trigger_requests_count;
+    A_UINT32 total_trig_dropped;
+    A_UINT32 umac_disengaged_count;
+    A_UINT32 umac_soft_reset_count;
+    A_UINT32 umac_engaged_count;
+    A_UINT32 last_trigger_request_ms;
+    A_UINT32 last_start_ms;
+    A_UINT32 last_start_disengage_umac_ms;
+    A_UINT32 last_enter_ssr_platform_thread_ms;
+    A_UINT32 last_exit_ssr_platform_thread_ms;
+    A_UINT32 last_start_engage_umac_ms;
+    A_UINT32 last_done_successful_ms;
+    A_UINT32 last_e2e_delta_ms;
+    A_UINT32 max_e2e_delta_ms;
+    A_UINT32 trigger_count_for_umac_hang;
+    A_UINT32 trigger_count_for_mlo_quick_ssr;
+    A_UINT32 trigger_count_for_unknown_signature;
+    A_UINT32 post_reset_tqm_sync_cmd_completion_ms;
+    A_UINT32 htt_sync_mlo_initiate_umac_recovery_ms;
+    A_UINT32 htt_sync_do_pre_reset_ms;
+    A_UINT32 htt_sync_do_post_reset_start_ms;
+    A_UINT32 htt_sync_do_post_reset_complete_ms;
+} htt_umac_ssr_stats_t;
+
+typedef struct {
+    htt_tlv_hdr_t tlv_hdr;
+    htt_umac_ssr_stats_t stats;
+} htt_umac_ssr_stats_tlv;
 
 
 #endif /* __HTT_STATS_H__ */
