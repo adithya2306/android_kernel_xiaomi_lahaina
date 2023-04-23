@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2012-2021 The Linux Foundation. All rights reserved.
  * Copyright (C) 2021 XiaoMi, Inc.
- * Copyright (c) 2021-2022 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2021-2023 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -7245,6 +7245,8 @@ const struct nla_policy wlan_hdd_wifi_config_policy[
 	[QCA_WLAN_VENDOR_ATTR_CONFIG_TX_NSS] = {.type = NLA_U8 },
 	[QCA_WLAN_VENDOR_ATTR_CONFIG_RX_NSS] = {.type = NLA_U8 },
 	[QCA_WLAN_VENDOR_ATTR_CONFIG_FT_OVER_DS] = {.type = NLA_U8 },
+	[QCA_WLAN_VENDOR_ATTR_CONFIG_WFC_STATE] = {
+		.type = NLA_U8 },
 };
 
 static const struct nla_policy
@@ -9047,6 +9049,38 @@ static int hdd_config_set_bt_active(struct hdd_adapter *adapter,
 
 
 /**
+ * hdd_set_wfc_state() - Set wfc state
+ * @adapter: hdd adapter
+ * @attr: pointer to nla attr
+ *
+ * Return: 0 on success, negative on failure
+ */
+static int hdd_set_wfc_state(struct hdd_adapter *adapter,
+			     const struct nlattr *attr)
+{
+	uint8_t cfg_val;
+	enum pld_wfc_mode set_val;
+	struct hdd_context *hdd_ctx = WLAN_HDD_GET_CTX(adapter);
+	int errno;
+
+	errno = wlan_hdd_validate_context(hdd_ctx);
+	if (errno)
+		return errno;
+
+	cfg_val = nla_get_u8(attr);
+
+	hdd_debug_rl("set wfc state %d", cfg_val);
+	if (cfg_val == 0)
+		set_val = PLD_WFC_MODE_OFF;
+	else if (cfg_val == 1)
+		set_val = PLD_WFC_MODE_ON;
+	else
+		return -EINVAL;
+
+	return pld_set_wfc_mode(hdd_ctx->parent_dev, set_val);
+}
+
+/**
  * typedef independent_setter_fn - independent attribute handler
  * @adapter: The adapter being configured
  * @attr: The nl80211 attribute being applied
@@ -9164,6 +9198,8 @@ static const struct independent_setters independent_setters[] = {
 	{QCA_WLAN_VENDOR_ATTR_CONFIG_BT_ACTIVE,
 	 hdd_config_set_bt_active},
 #endif
+	{QCA_WLAN_VENDOR_ATTR_CONFIG_WFC_STATE,
+	 hdd_set_wfc_state},
 };
 
 #ifdef WLAN_FEATURE_ELNA
@@ -19749,7 +19785,8 @@ static int wlan_hdd_cfg80211_connect_start(struct hdd_adapter *adapter,
 				    const u8 *ssid, size_t ssid_len,
 				    const u8 *bssid, const u8 *bssid_hint,
 				    uint32_t oper_freq,
-				    enum nl80211_chan_width ch_width)
+				    enum nl80211_chan_width ch_width,
+				    uint32_t ch_freq_hint)
 {
 	int status = 0;
 	QDF_STATUS qdf_status = QDF_STATUS_SUCCESS;
@@ -19941,6 +19978,8 @@ static int wlan_hdd_cfg80211_connect_start(struct hdd_adapter *adapter,
 			roam_profile->ChannelInfo.freq_list = NULL;
 			roam_profile->ChannelInfo.numOfChannels = 0;
 		}
+
+		roam_profile->freq_hint = ch_freq_hint;
 
 		if (wlan_hdd_cfg80211_check_pmf_valid(roam_profile)) {
 			status = -EINVAL;
@@ -21758,6 +21797,7 @@ static int __wlan_hdd_cfg80211_connect(struct wiphy *wiphy,
 #endif
 	struct hdd_adapter *adapter = WLAN_HDD_GET_PRIV_PTR(ndev);
 	struct hdd_context *hdd_ctx;
+	uint32_t ch_freq_hint = 0;
 
 	hdd_enter();
 
@@ -21873,11 +21913,15 @@ static int __wlan_hdd_cfg80211_connect(struct wiphy *wiphy,
 	else
 		ch_freq = 0;
 
+	if (req->channel_hint)
+		ch_freq_hint = req->channel_hint->center_freq;
+
 	wlan_hdd_check_ht20_ht40_ind(hdd_ctx, adapter, req);
 
 	status = wlan_hdd_cfg80211_connect_start(adapter, req->ssid,
 						 req->ssid_len, req->bssid,
-						 bssid_hint, ch_freq, 0);
+						 bssid_hint, ch_freq, 0,
+						 ch_freq_hint);
 	if (status) {
 		wlan_hdd_cfg80211_clear_privacy(adapter);
 		hdd_err("connect failed");
